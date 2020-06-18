@@ -2,8 +2,14 @@
 /**
  * class that houses the data and methods for modifying data
  */
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SiteData {
 
@@ -17,10 +23,10 @@ public class SiteData {
 
 	/**
 	 * constructor sets name of current file and reads in the csv file 
-	 * @param currentFile name of current file to read/write data to
+	 * @param fileName name of current file to read/write data to
 	 */
-	public SiteData(String currentFile) {
-		this.currentFile = currentFile;
+	public SiteData(String fileName) {
+		this.currentFile = fileName;
 		readCSV();
 	}
 
@@ -44,23 +50,20 @@ public class SiteData {
 					sites.put(data[0], data[1]);
 				}
 			}
-		} catch (FileNotFoundException f) {
-			//add message saying file wasn't found
-			
-			f.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
 				reader.close();
-				
-			}catch(Exception e) {
+			} catch(Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
+	
 	/**
 	 * writes data to csv file
+	 * 
 	 * @param filename name of file writing to
 	 * if filename already exists, it overwrites it. otherwise creates a new file with that name
 	 */
@@ -78,8 +81,10 @@ public class SiteData {
 			ex.printStackTrace(System.err);
 		}
 	}
+	
 	/**
 	 * adds new site to end of csv file and then to the main hashmap
+	 * 
 	 * @param filename name of file to be appended to
 	 * @throws IOException
 	 */
@@ -99,10 +104,12 @@ public class SiteData {
 		writer.flush();
 		writer.close();
 	}
+	
 	/**
 	 * csv reader for importing
-	 * @param filepath
-	 * @param merge
+	 * 
+	 * @param filepath	CSV file absolute path
+	 * @param merge		True is they are merging and False if not
 	 */
 	public void readCSV(String filepath, boolean merge) {
 		BufferedReader reader = null;
@@ -125,9 +132,6 @@ public class SiteData {
 				}
 			}
 			reader.close();
-		} catch (NullPointerException n) {
-			System.out.println("null pointer exception");
-			n.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 
@@ -138,6 +142,7 @@ public class SiteData {
 	 * @return hashmap of site locations and ip addresses
 	 */
 	private HashMap<String,String> getDefaultList(){
+		
 		HashMap<String,String> list = new HashMap<String,String>();
 		list.put("Pohick Vault", "172.16.28.3");
 		list.put("Pohick PS", "172.16.28.13");
@@ -196,6 +201,7 @@ public class SiteData {
 		list.put("GMU Tank", "172.16.102.3");
 		list.put("Lyndhurst Tank", "172.16.103.3");
 		list.put("Wall Street PRV/Tank", "172.16.104.3"); 
+	
 		return list;
 	}
 	
@@ -220,11 +226,8 @@ public class SiteData {
 		String result = newSites.put(name, ip);
 		appendCSV(currentFile);
 		
-		if(result != null) {
-			return false;
-		} else {
-			return true;
-		}
+		if(result != null) return false;
+		return true;
 		//refreshData(currentFile);
 	}
 	/**
@@ -236,11 +239,8 @@ public class SiteData {
 		String result = sites.remove(name);
 		refreshData(currentFile);
 		
-		if(result == null) {
-			return false;
-		} else {
-			return true;
-		}
+		if(result == null) return false;	
+		return true;
 	}
 	/**
 	 * edits the existing sites
@@ -286,11 +286,15 @@ public class SiteData {
 	}
 	/**
 	 * exports the current list of sites to a specified location
-	 * @param location directory location of file
-	 * @param name name to be given to file
+	 * @param filePath The path to the exported csv
 	 * @return true if successful, false otherwise
 	 */
-	public boolean exportFile(String location, String name) {
+	public boolean exportFile(String filePath) {
+		try {
+			writeCSV(filePath);
+		} catch(Exception e) {
+			return false;
+		}
 		
 		return true;
 	}
@@ -366,8 +370,8 @@ public class SiteData {
 	public String getIP(String key) {
 		return sites.get(key);
 	}
-
 	
+	//Testing------------------------------------------------------------------------------------------------------//
 	
 	public static void main(String[] args) throws IOException {
 		/*SiteData test =*/ new SiteData("list.csv");

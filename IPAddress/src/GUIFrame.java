@@ -13,7 +13,7 @@ public class GUIFrame extends JFrame implements ActionListener {
 
 	// Local fields
 	InputStream is;
-	static SiteData sites;
+	public static SiteData sites;
 	private static JComboBox<Object> dropdown;
 	
 	// Local Swing variables
@@ -235,7 +235,7 @@ public class GUIFrame extends JFrame implements ActionListener {
 		}
 		//creates a csv popup
 		if(e.getSource() == csvButton) {
-			new CSVPopup();
+			new CSVPopup(sites);
 		}
 		
 	}
@@ -359,6 +359,13 @@ public class GUIFrame extends JFrame implements ActionListener {
 	 */
 	public static JComboBox<Object> getDropdown() {
 		return dropdown;
+	}
+	
+	/*
+	 * Gets the current state of the sites
+	 */
+	public static SiteData getSites() {
+		return sites;
 	}
 
 	/**

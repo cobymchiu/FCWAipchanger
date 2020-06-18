@@ -1,11 +1,13 @@
 
-import java.awt.BorderLayout;
+import java.awt.BorderLayout; 
 import java.awt.Component;
 import java.awt.event.*;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -23,12 +25,13 @@ public class CSVPopup extends JFrame implements Popup, ActionListener{
 	private JButton expButton = new JButton("Export");
 	private JLabel filename1 = new JLabel();
 	private JLabel filename2 = new JLabel();
-
 	private JFileChooser chooser;
-	private JFrame frame;
-	private String path = "";
-	private String name = "";
-	public CSVPopup() {
+	private String name, path;
+	private SiteData currSites;
+	
+	
+	public CSVPopup(SiteData sites) {
+		currSites = sites;
 		createAndShowPopup();
 	}
 
@@ -114,12 +117,10 @@ public class CSVPopup extends JFrame implements Popup, ActionListener{
 			}
 		}
 		//action for when export button is pushed
-		//to do: make it so user can name file and choose where to put it
 		if(e.getSource() == expButton) {
 			BufferedWriter bw = null;
 			FileWriter fw = null;
 			//file chooser properties
-			//chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 			chooser.setDialogTitle("Select file location and name");
 
 			//choosing where to put file + file name
@@ -128,22 +129,14 @@ public class CSVPopup extends JFrame implements Popup, ActionListener{
 			if(returnVal == JFileChooser.APPROVE_OPTION) {
 				File directory = chooser.getSelectedFile();
 				path = directory.getAbsolutePath();
-				name = directory.getName();
-				//writes a file to the inputed file name
-				try {
-					fw = new FileWriter(name+ ".csv");	//add check for the extension
-					bw = new BufferedWriter(fw);
-					bw.write("something");	//find a way to make this a copy of original file
-					
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}	
+				currSites.exportFile(path);
 			}
 		}
 	}
 	
-	
+	//Testing------------------------------------------------------------------------------------------------------//
+
 	public static void main(String[] args) {
-		new CSVPopup();
+		//new CSVPopup(currSites);
 	}
 }
