@@ -2,8 +2,8 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.io.InputStream;
-
 import javax.swing.*;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -11,9 +11,12 @@ import java.net.UnknownHostException;
 @SuppressWarnings("serial")
 public class GUIFrame extends JFrame implements ActionListener {
 
-	InputStream is = getClass().getResourceAsStream("list.csv");
-	static SiteData sites = new SiteData("list.csv");	//this is where the current csv file should be changed - make it a file location instead of name
-	//swing variables
+	// Local fields
+	InputStream is;
+	static SiteData sites;
+	private static JComboBox<Object> dropdown;
+	
+	// Local Swing variables
 	private JLabel instructionLabel = new JLabel();
 	private JLabel currentIPLabel = new JLabel();
 	private JLabel plcAddress = new JLabel();
@@ -28,17 +31,22 @@ public class GUIFrame extends JFrame implements ActionListener {
 	private JPanel topPanel = new JPanel();
 	private JPanel leftPanel = new JPanel();
 	private JPanel rightPanel = new JPanel();
-	private static JComboBox<Object> dropdown = new JComboBox<Object>(sites.locationToArray());
 
 	/**
-	 * constructor for frame object
+	 * Constructor for frame object
 	 */
 	public GUIFrame() {
+		//Access CSV file
+		is = getClass().getResourceAsStream("list.csv");
+		sites = new SiteData("list.csv");
+		dropdown = new JComboBox<Object>(sites.locationToArray());
+		
+		//Create GUI
 		createAndShowWindow();
 	}
 
 	/**
-	 * method to create and show GUI
+	 * Initializes GUI and sets visibility
 	 */
 	public final void createAndShowWindow() {
 		//window properties
@@ -57,9 +65,18 @@ public class GUIFrame extends JFrame implements ActionListener {
 		setVisible(true);
 	}
 
+	/**
+	 * Initializes all the components
+	 * 
+	 * - Instructions, IP, buttons, ACtionListeners
+	 */
 	private void setComponentProperties() {
 		//instructions
-		instructionLabel.setText("<HTML>Instructions<BR>---------------------------------<BR>1.Plug into network switch.<BR>2.Choose site.<BR>3.Change Computer IP.<BR>4.Refresh IP address.</HTML>");
+		instructionLabel.setText("<HTML>Instructions<BR>---------------------------------<BR>"
+				+ "1.Plug into network switch.<BR>"
+				+ "2.Choose site.<BR>"
+				+ "3.Change Computer IP.<BR>"
+				+ "4.Refresh IP address.</HTML>");
 
 		//finding IP
 		String hostIP; 
@@ -106,9 +123,15 @@ public class GUIFrame extends JFrame implements ActionListener {
 		csvButton.addActionListener(this);
 	}
 	
-	
+	/**
+	 * Adds all the components to each panel
+	 * 
+	 * 	Right: PLCAddress, changePLC, pingPLC, pingRouter
+	 * 	Left: Site, add, remove, edit, import/export, Instructions
+	 * 	Top: IPAddress, refresh
+	 */
 	private void addComponentsToPanels() {
-		//add buttons to right panel
+		//add and format right panel
 		rightPanel.setLayout(new GridLayout(4,0,1,20));
 		rightPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		rightPanel.add(plcAddress);
@@ -116,7 +139,7 @@ public class GUIFrame extends JFrame implements ActionListener {
 		rightPanel.add(pingPLCButton);
 		rightPanel.add(pingRouterButton);
 		
-		//add and format left side
+		//add and format left panel
 		JPanel buttonPane = new JPanel();
 		buttonPane.setMaximumSize(new Dimension(205, 30));
 		buttonPane.setLayout(new BoxLayout(buttonPane, BoxLayout.LINE_AXIS));
@@ -135,14 +158,14 @@ public class GUIFrame extends JFrame implements ActionListener {
 		leftPanel.add(csvButton);
 		leftPanel.add(instructionLabel);
 
-		//add top part
+		//add and format top panel
 		topPanel.add(currentIPLabel);
 		topPanel.add(refreshButton);
 	}
 	
 	/**
 	 * action events for the dropdown and buttons
-	 * @param e
+	 * @param e The ActionEvent performed
 	 */
 	public void actionPerformed(ActionEvent e) {
 		//shows plc address of selected location
@@ -151,7 +174,7 @@ public class GUIFrame extends JFrame implements ActionListener {
 			plcAddress.setText("PLC Address: " + sites.getValue(data)); 
 		}
 		//refreshes current ip address
-		if(e.getSource() == refreshButton) {
+		else if(e.getSource() == refreshButton) {			
 			try {
 				String ip = InetAddress.getLocalHost().toString();
 				int slashPos = ordinalIndexOf(ip,"/",1);
@@ -168,14 +191,22 @@ public class GUIFrame extends JFrame implements ActionListener {
 			siteIp = sites.getValue(data);
 			String third = "";
 			third = getSubnet(siteIp);
-			openCMD(third); //method that does the changing	
+			try {
+				openCMD(third);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 		//pings the selected site plc
 		if(e.getSource() == pingPLCButton) {
 			String data = dropdown.getItemAt(dropdown.getSelectedIndex()) + "";
 				String siteIp = new String();
 				siteIp = sites.getValue(data);
-				pingCMD(siteIp);  //the method that does stuff 
+				try {
+					pingCMD(siteIp);
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}  
 		}
 		//pings the selected router
 		if(e.getSource() == pingRouterButton) {
@@ -184,7 +215,11 @@ public class GUIFrame extends JFrame implements ActionListener {
 			siteIp = sites.getValue(data);
 			String third = "";
 			third = getSubnet(siteIp);
-			routerCMD(third); //the method that does stuff 
+			try {
+				routerCMD(third);
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} 
 		}
 		//creates an edit popup
 		if(e.getSource() == editButton) {
@@ -205,19 +240,25 @@ public class GUIFrame extends JFrame implements ActionListener {
 		
 	}
 
-	//main method testing
+	//Testing------------------------------------------------------------------------------------------------------//
 	public static void main(String[] args) {
 		new GUIFrame();
 	}
 
-	//helper methods-----------------------------------------------------------------------------------------------//
+	//Helper Methods-----------------------------------------------------------------------------------------------//
 	
 	/**
-	 * unsure of use -- seems to find position of character
-	 * @param data
-	 * @param substr
-	 * @param n
+	 * Finds the nth occurrence of a substring within a string
+	 * 
+	 * @param data	
+	 * 		The larger string
+	 * @param substr	
+	 * 		The encapsulated string
+	 * @param n		
+	 * 		The desired number of occurrences
 	 * @return
+	 * 		The index of the nth occurrence of a substring and
+	 * 		-1 if substr is not within data
 	 */
 	public static int ordinalIndexOf(String data, String substr, int n) {
 
@@ -226,69 +267,96 @@ public class GUIFrame extends JFrame implements ActionListener {
 			pos = data.indexOf(substr, pos + 1);
 		return pos;
 	}
+	
 	/**
+	 * Counts the number of occurrences of a character within a string
+	 * 
+	 * @param str	String to be parsed through
+	 * @param target	Character being searched for
+	 * @return
+	 * 		The number of occurrences of target within str
+	 */
+	private static int countOccurrences(String str, char target) {
+		int count = 0;
+		  
+		for (int i = 0; i < str.length(); i++) {
+		    if (str.charAt(i) == target) {
+		        count++;
+		    }
+		}
+		return count;
+	}
+	
+	/**
+	 * Determines the 3rd number within an IP Address
+	 * Finds the substring between the 2nd and 3rd "."
 	 * 
 	 * @param data
+	 * 		The IP Address
 	 * @return
+	 * 		The 3rd number of the IP Address and null if
+	 * 		the IP is invalid.
 	 */
 	public static String getSubnet(String data) {
-		String num = data;
-		int pt1 = ordinalIndexOf(num,".",2);
-		int pt2 = ordinalIndexOf(num,".",3);
-		return num.substring(pt1+1, pt2);
+		// Test that the IP is valid
+		if (countOccurrences(data, '.') != 3) return null;
+		
+		int pt1 = ordinalIndexOf(data,".",2);
+		int pt2 = ordinalIndexOf(data,".",3);
+		
+		return data.substring(pt1+1, pt2);
 	}
 
-	//command prompt methods i haven't touched from original code
-	private String error = "An error has occurred.";
-	public void openCMD(String octet3) {
-		try
-		{
-			Runtime runTime = Runtime.getRuntime();
-			String argCommand = new String();
-			String netmask = "255.255.255.0";
-			String gw = "172.16." + octet3 + ".1";
-			argCommand = "cmd.exe /c start cmd /k netsh interface ipv4 set address \"Local Area Connection\" static 172.16." + octet3 + ".19 " + netmask + " " + gw + " 1";	 
-			runTime.exec(argCommand);
-		}	
-		catch (Exception e)
-		{
-			System.out.println(error);
-			e.printStackTrace();
-		}
+	/**
+	 * Opens the command prompt and changes the device IP Address
+	 * 
+	 * @param octet3
+	 * 		The third number of the IP Address
+	 * @throws IOException 
+	 */
+	public void openCMD(String octet3) throws IOException {
+		Runtime runTime = Runtime.getRuntime();
+		String argCommand = new String();
+		String netmask = "255.255.255.0";
+		String gw = "172.16." + octet3 + ".1";
+		argCommand = "cmd.exe /c start cmd /k netsh interface ipv4 set address "
+				+ "\"Local Area Connection\" static 172.16." + octet3 + ".19 " + netmask + " " + gw + " 1";	 
+		runTime.exec(argCommand);
 	}
 
-	public void pingCMD(String data) {
-		try
-		{
-			Runtime runTime = Runtime.getRuntime();
-			String argCommand = new String();
-			argCommand = "cmd.exe /c start cmd /k ping " + data;	 
-			runTime.exec(argCommand);
-			System.out.println(argCommand);
-		}	
-		catch (Exception e)
-		{
-			System.out.println(error);
-			e.printStackTrace();
-		}	
+	/**
+	 * runs the ping command in the command prompt
+	 * 
+	 * @param data
+	 * 		The destination IP Address
+	 * @throws IOException 
+	 */
+	public void pingCMD(String data) throws IOException {
+		Runtime runTime = Runtime.getRuntime();
+		String argCommand = new String();
+		argCommand = "cmd.exe /c start cmd /k ping " + data;	 
+		runTime.exec(argCommand);
 	}
 
-	public void routerCMD(String octet3) {
-		try
-		{
-			Runtime runTime = Runtime.getRuntime();
-			String argCommand = new String();
-			argCommand = "cmd.exe /c start cmd /k ping 172.16." + octet3 + ".1";	 
-			runTime.exec(argCommand);
-			System.out.println(argCommand);
-		}	
-		catch (Exception e)
-		{
-			System.out.println(error);
-			e.printStackTrace();
-		}
+	/**
+	 * runs the ping command in the command prompt with the router
+	 * 
+	 * @param octet3
+	 * 		The destination IP Address
+	 * @throws IOException 
+	 */
+	public void routerCMD(String octet3) throws IOException {
+		Runtime runTime = Runtime.getRuntime();
+		String argCommand = new String();
+		argCommand = "cmd.exe /c start cmd /k ping 172.16." + octet3 + ".1";	 
+		runTime.exec(argCommand);
 	}
 
+	/**
+	 * Returns the dropdown list
+	 * 
+	 * @return	The dropdown created prior
+	 */
 	public static JComboBox<Object> getDropdown() {
 		return dropdown;
 	}
