@@ -35,10 +35,10 @@ public class GUIFrame extends JFrame implements ActionListener {
 	/**
 	 * Constructor for frame object
 	 */
-	public GUIFrame() {
+	public GUIFrame(String fileName) {
 		//Access CSV file
-		is = getClass().getResourceAsStream("list.csv");
-		sites = new SiteData("list.csv");
+		is = getClass().getResourceAsStream(fileName);
+		sites = new SiteData(fileName);
 		dropdown = new JComboBox<Object>(sites.locationToArray());
 		
 		//Create GUI
@@ -239,10 +239,10 @@ public class GUIFrame extends JFrame implements ActionListener {
 		}
 		
 	}
-
+ 
 	//Testing------------------------------------------------------------------------------------------------------//
 	public static void main(String[] args) {
-		new GUIFrame();
+		new GUIFrame("list.csv");
 	}
 
 	//Helper Methods-----------------------------------------------------------------------------------------------//
