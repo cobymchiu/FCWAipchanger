@@ -17,8 +17,8 @@ public class SiteData {
 //	InputStreamReader isr = new InputStreamReader(is);
 	
 	//site data storage
-	private HashMap<String,String> sites = new HashMap<String,String>();
-	private HashMap<String,String> newSites = new HashMap<String,String>();
+	public HashMap<String,String> sites = new HashMap<String,String>();
+	public HashMap<String,String> newSites = new HashMap<String,String>();
 	private String currentFile;	
 
 	/**
@@ -270,20 +270,7 @@ public class SiteData {
 		
 		return true;
 	}
-	/**
-	 * imports a given file and either merges or replaces the original csv file
-	 * @param filename name of file to import
-	 * @param merge states whether the new and old file will be merged or not
-	 * @return true if successful, false otherwise
-	 */
-	public boolean importFile(String filename, boolean merge) {
-		if(merge) {
-			
-		} else {
-			
-		}
-		return true;
-	}
+
 	/**
 	 * exports the current list of sites to a specified location
 	 * @param filePath The path to the exported csv
