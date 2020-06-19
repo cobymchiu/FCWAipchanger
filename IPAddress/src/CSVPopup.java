@@ -65,14 +65,14 @@ public class CSVPopup extends JFrame implements Popup, ActionListener{
 		
 		//merge/replace frame
 		mrFrame = new JFrame();
-		JPanel panel = new JPanel();
+		JPanel mrPanel = new JPanel();
 		mButton = new JButton("Merge");
 		rButton = new JButton("Replace");
 		JLabel question1 = new JLabel("Would you like to merge or replace the old file with this one?");
-		panel.add(mButton);
-		panel.add(rButton);
+		mrPanel.add(mButton);
+		mrPanel.add(rButton);
 		mrFrame.add(question1);
-		mrFrame.add(panel);
+		mrFrame.add(mrPanel);
 		mrFrame.pack();
 		mrFrame.setLocationRelativeTo(null);
 		mrFrame.setVisible(false);
@@ -92,7 +92,6 @@ public class CSVPopup extends JFrame implements Popup, ActionListener{
 		panel.add(expPanel);
 		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 		panel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
 	}
 
 
