@@ -1,0 +1,116 @@
+Contents:
+		
+This help window contains in-depth explanations of 
+every aspect of the IP Address Lookup. Navigate
+through the different tabs to read about anything 
+that you may need more information about.
+
+Instructions:
+
+1. Plug into network switch
+         - connect computer to the switch via ethernet
+2. Choose Site
+         - select your current site from the dropdown menu
+         - if your site is not listed, you can add a new site
+         - if your site is incorrect, you can edit the site
+3. Change computer IP Address
+         - click on the button to change the IP Address of 
+           your computer
+4. Refresh computer IP Address
+         - click the refresh button in the top right to update 
+           the IP Address
+
+Sites:
+
+This is a list of all the sites listed in the given csv
+file. If this list is incorrect, it can be edited in a 
+number of ways. Sites can be added, edited, or 
+removed. In addition to this, a whole new list of sites
+can be imported as a new csv file.
+
+Add:
+
+When adding a new site, remember to double check 
+that the name and IP Address of the site are correct 
+and then click confirm. The site will now be visible 
+in the site dropdown list.
+
+Remove:
+
+When removing a site, double check that you have 
+selected the correct site from the dropdown list and 
+click confirm. After a site is removed, it will no 
+longer be visible in the site dropdown list. If a site
+is removed accidently, it can always be added back 
+into the list manually.
+
+Edit:
+
+When editing a site, remember to double check that 
+you have selected the correct original site and that the 
+changed values are correct. After confirm is clicked,
+the site should be updated within the site dropdown. If
+an error was made editing a site, it can always be fixed
+be manually editing the site again.
+
+IP Address:
+
+Your Internet Protocol Address (IP Address) is the 
+unique identifier assigned to your device in order
+to make a network connection. This identifier is 
+denoted by a numerical label separated into 4 octets
+of values from 0-255.
+
+PLC Address:
+
+A Programmable Logic Controller (PLC) is a digital 
+computer designed to run the specific commands 
+programmed into it. This is the address of the PLC that 
+this software will be talking to.
+
+Ping:
+
+After your IP Address is configured, you have the ability
+to ping PLC/Telnet or the router. This means that a 
+ping is sent to check the network reachability of the 
+device. This will show if the network connection is 
+present and how fast the connection is.
+
+PLC/Telnet:
+
+You can ping the PLC by selecting the "Ping PLC/
+Telnet" button. This will open a command prompt that 
+will  display the ping results to the PLC. These results
+will display both the connectivity and the latency 
+of the connection.
+
+Router:
+
+You can ping the router by selecting the "Ping Router"
+button. This will open a command prompt that will 
+display the ping results to the router. These results
+will display both the connectivity and the latency 
+of the connection.
+
+CSV File:
+
+There is a stored CSV file with all of the sites and 
+their IP Addresses. This csv file can be edited in many
+ways within this program. In addition to this, the file can 
+be imported and exported by the user.
+.
+The format for this file is as follows..
+site1, 123.123.123.123
+site2, 456.456.456.456
+site3, 789.789.789.789
+
+Import/Export:
+
+The CSV file containing the sites and their IP 
+Addresses can be both imported and exported. An 
+imported csv file can either completely replace the
+existing csv file or merge with the existing file. 
+Duplicate sites will be merged and new sites will be 
+added. When a csv file is  exported, it will be 
+exported as the current state of the file at the time 
+of export.
